@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block site-title %}
+    
+{% endblock site-title %}
+
+{% block site-content %}
+    
+<div id="myModal1" class="modal">
+    <div style="background-color: rgb(45, 45, 104);" class="modal-content1">
+        <span class="close" id="closeModalBtn1">&times;</span>
+        <h2 style="color: rgb(168, 162, 162);">Add Comment</h2>
+        <form action="{% url 'message-page' messagess.id %}" style="display: inline-grid;" id="editForm" method="post">
+            {% csrf_token %}
+            {{commentForm}}
+            <button style="margin-top: 10px; background-color: rgba(0, 255, 255, 0.678);" type="submit">Kaydet</button>
+    </form>
+  </div>
+  </div>
+
+  
+   
+
+    <main>
+        <div class="contents">
+            <article>
+                <img src="{{ messagess.author.avatar.url }}" />
+                <div style="width: 100%;" >
+                    <name>{{ messagess.author.username }}</name>
+                    <p>{{ messagess.messageContent }}</p>
+                    <p style="color: rgb(122, 122, 185);">{{ messagess.createdAt }} <p style="background-color: rgba(255, 255, 0, 0.315);display: inline;">{{messagess.postViews}} Views</p> </p>
+                    {% if request.user.is_authenticated and request.user.id == messagess.author.id or IsAuthorized %}
+                        <a href="{% url 'delete-message' messagess.id %}" style="color: brown;">Delete Message</a>
+                        <a href="{% url 'update-message' messagess.id %}" style="color: rgba(31, 207, 148, 0.651);">Update Message</a>
+                    {% endif %}
+                    {% if request.user.is_authenticated %}
+                        <div style="display: flex;
+                        justify-content: end;">
+
+                        <form action="{% url 'like-post' messagess.id %}">
+                            <button type="submit" style="background-color: rgb(165, 231, 165);">👍</button>  {{messagess.total_likes}} Likes
+                        </form>
+
+                        <form action="{% url 'dislike-post' messagess.id %}">
+                            <button type="submit" style="background-color: rgb(204, 59, 48);">👎</button>  {{messagess.total_dislikes}} Dislikes
+                        </form>
+
+                        </div>
+                        {% endif %}
+                        {% if request.user.is_authenticated == False %}
+                        <div style="display: flex;justify-content: end;">
+
+                            <button  style="background-color: rgb(165, 231, 165);">👍</button>  {{messagess.total_likes}} Likes
+                            <button  style="background-color: rgb(204, 59, 48);">👎</button>  {{messagess.total_dislikes}} Dislikes
+
+                        </div>
+                    {% endif %}
+                </div>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <div class="addMessage" style="display: flex;justify-content:center ;margin-top: 1rem;">
+        <a href="#">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+         <button class="btn-submit" type="submit" id="openModalBtn1" >Comment</button>
+      </a>
+      </div>
+
+    {% for data in messagess.comments.all  %}
+    <div class="yorumlar">   
+        <main>
+            <div class="contents">
+            <article style="width: 490px;height: 145px;background-color: rgb(0 245 64 / 12%);">
+                <img src="{{data.author.handleAvatar}}" />
+                <div>
+                <name> <a href="{% url 'profile-page' data.author.id %}" style="color: rgba(0, 255, 255, 0.63);">{{data.author}} </a></name>
+                <p>
+                    {{data.comment}}
+                </p>
+                <p style="color: rgb(122, 122, 185);">{{comment.createdAt}}</p>
+                {% if request.user == data.author  %}
+                <a href="{% url 'delete-comment' messagess.id data.id  %}" style="color: brown;">Delete Comment</a>
+                {% endif %}
+                
+                </div>   
+            </article>
+            </div>
+        </main>
+    </div>
+    {% endfor %}
+
+    {% for message in messages %}
+
+    <div class="notification">
+        <p>  {{message}} </p>
+        <span class="notification__progress"></span>
+      </div>
+    
+    {% endfor %}
+        
+    <script>
+        const openModalBtn1 = document.getElementById('openModalBtn1');
+        const closeModalBtn1 = document.getElementById('closeModalBtn1');
+        const modal1 = document.getElementById('myModal1');
+        
+        openModalBtn1.addEventListener('click', () => {
+            modal1.style.display = 'block';
+        });
+        
+        closeModalBtn1.addEventListener('click', () => {
+            modal1.style.display = 'none';
+        });
+        
+        window.addEventListener('click', (event) => {
+            if (event.target === modal1) {
+                modal1.style.display = 'none';
+            }
+        });
+        </script>
+           
+{% endblock site-content %}

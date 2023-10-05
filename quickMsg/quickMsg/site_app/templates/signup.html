@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block site-title %}
+    Sign-Up
+{% endblock site-title %}
+
+{% block site-content %}
+
+{% for message in messages %}
+
+<div class="notification">
+    <p>  {{message}} </p>
+    <span class="notification__progress"></span>
+  </div>
+
+
+  {% endfor %}
+
+<div class="login-box">
+    <h2>Sign-Up</h2>
+    
+    <form action="{% url 'signup-page' %}" method="post">
+        {% csrf_token %}
+        <div class="user-box">
+            <input type="text" name="firstname" required >
+            <label>First Name</label>
+        </div>
+
+        <div class="user-box">
+            <input type="text" name="lastname" required>
+            <label>Last Name</label>
+        </div>
+
+        <div class="user-box">
+            <input type="text" name="username" required>
+            <label>Username</label>
+        </div>
+        
+        <div class="user-box">
+            <input type="password" name="password" required>
+            <label>Password</label>
+        </div>
+
+        <div class="user-box">
+            <input type="password" name="confirmpassword" required>
+            <label>Confirm Password</label>
+        </div>
+
+        <div class="user-box">
+            <input type="text" name="email" required>
+            <label>E-Mail</label>
+        </div>
+        
+        
+        <a type="submit" href="{% url 'signup-page' %}">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+           <button class="btn-submit" type="submit" >Sıgn-Up</button>
+        </a>
+    
+    
+    </form>
+</div>
+
+{% endblock site-content %}

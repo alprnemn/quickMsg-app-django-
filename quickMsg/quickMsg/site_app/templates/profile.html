@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block site-title %}
+    Profile | {{user.username}}
+{% endblock site-title %}
+
+
+
+{% block site-content %}
+    
+
+
+    <div id="myModal" class="modal">
+        <div style="background-color: rgb(45, 45, 104);margin-top: 100px;" class="modal-content">
+            <span class="close" id="closeModalBtn">&times;</span>
+            <h2 style="color: rgb(168, 162, 162);">Bilgileri Düzenle</h2>
+            <form action="{% url 'profile-page' user.id %}" style="display: inline-grid;" id="editForm" method="post">
+                {% csrf_token %}
+                {{form}}
+
+                <label for="confirmpassword">New Password</label>
+                <input type="password" name="newpassword">
+
+                <label for="confirmpassword">Confirm Password</label>
+                <input type="password" name="confirmpassword">
+               
+                <button style="margin-top: 10px; background-color: rgba(0, 255, 255, 0.678);" type="submit">Kaydet</button>
+        </form>
+    </div>
+    </div>
+
+   
+
+
+
+<div class="main3">
+    <h2 style="color: white;color: #9798af;
+    text-align: center;
+    margin-top: 75px;
+    margin-bottom: 30px;">IDENTITY</h2>
+    <div class="card3">
+        <div class="card-body3">
+            {% if request.user.id == user.id or IsAuthorized %}
+            <a id="openModalBtn" href="#"><i class="fa fa-pen fa-xs edit"></i></a>
+            {% endif %}
+            <table>
+                <tbody>
+                   
+                    <tr>
+                        <td>Profile Pic</td>
+                        <td>:</td>
+                        <td><img style="max-width: 100px;" src="{{user.handleAvatar}}" alt="Profile Pic"></td>
+                    </tr>
+                    {% if request.user.id == user.id or IsAuthorized %}
+                    <tr>
+                        <td>Profile Pic</td>
+                        <td>:</td>
+                        <td>
+                            <form method="POST" action="{% url 'change-avatar' user.id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ formavatar }}
+                                <input type="file" name="avatar">
+                                <button type="submit" style="background-color: cyan;">Submit</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td>About</td>
+                        <td>:</td>
+                        <td>{{user.about}}</td>
+                    </tr>
+                    <tr>
+                        <td>Role</td>
+                        <td>:</td>
+                        <td style="color: chocolate;">{{user.rank}}</td>
+                    </tr>
+                    <tr>
+                        <td>First Name</td>
+                        <td>:</td>
+                        <td>{{user.first_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Last Name</td>
+                        <td>:</td>
+                        <td>{{user.last_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Username</td>
+                        <td>:</td>
+                        <td>{{user.username}}</td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td>:</td>
+                        <td> ********</td>
+                        
+                    </tr>
+                    <tr>
+                        <td>E-Mail</td>
+                        <td>:</td>
+                        <td>{{user.email}}</td>
+                    </tr>
+                    <tr>
+                        <td>Date Joined</td>
+                        <td>:</td>
+                        <td>{{user.date_joined}}</td>
+                    </tr>
+                    <tr>
+                        <td>Ban Status</td>
+                        <td>:</td>
+                        <td>
+                            {% if isBanned %}
+                                <p style="color: rgba(255, 0, 0, 0.685);display: inline;"><b>Banned</b></p>
+                            {% else %}
+                                <p style="display: inline;color: rgba(38, 209, 16, 0.719);"><b>Available</b></p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if request.user.id == user.id or IsAuthorized %}
+                                                         
+                            <form action="{% url 'delete-account' user.id %}" method="post">
+                                {% csrf_token %}
+                            <button onclick="confirmDeletion(event,'{{user.id}}')" style="background-color: rgb(153, 17, 17);color: bisque;margin-right: 40px;margin-top: 20px;">Delete Account</button>
+                            </form>
+                        {% endif %}
+                        </td>
+                    </tr>     
+                    <tr>
+                        <td>
+                        {% if IsAuthorized %}
+                            
+                            {% if isBanned %}
+                                <a href="{% url 'unban-user' user.id %}"><button style="background-color: rgba(17, 221, 51, 0.493);color: bisque;margin-right: 40px;margin-top: 20px;">Unban</button></a>
+                            {% else %}
+                                <a href="{% url 'ban-user' user.id %}"><button style="background-color: rgb(153, 17, 17);color: bisque;margin-right: 40px;margin-top: 20px;">Ban Account</button></a>
+                            {% endif %}
+                        {% endif %}
+                        </td>
+                    </tr> 
+                </tbody>    
+            </table>
+        </div>
+    </div>
+
+    <div class="divssss" style="display: flex;flex-direction:column;">
+
+    <div class="follow-buttons" style="display: flex;justify-content: center;">
+        {% if request.user.is_authenticated %}
+            {% if request.user in users.followers.all %}
+                
+            <a href="{% url 'unfollow-user' user.id %}" style="color: red;">Unfollow</a>  
+    
+            {%else%}
+                
+            <a href="{% url 'follow-user' user.id %}" style="color: green;">Follow {{ users.username }}</a>
+            
+            {% endif %}
+
+        {% endif %}      
+        
+        
+        
+    </div>
+
+
+    <div class="follow" style="display: flex;
+    justify-content: space-evenly;
+    background-color: #181649c7;;margin-top: 20px;">
+        <div class="followers">
+            <h2 style="color: white;text-align: center;">Followers</h2>
+            <hr>
+            <ul style="list-style: none;">
+                
+            {% for follower in users.followers.all %}
+                <li>
+                    <a href="#" style="color: #f8f8fd;text-align: center;">{{ follower.username }}</a>
+                </li>
+            {% endfor %}
+                
+            </ul>
+        </div>
+    </div>
+    </div>
+    {% for message in messages %}
+
+    <div>
+    <div class="notification">
+        <p>  {{message}} </p>
+        <span class="notification__progress"></span>
+      </div>
+    </div>
+    {% endfor %}
+
+
+<script>
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modal = document.getElementById('myModal');
+
+    openModalBtn.addEventListener('click', () => {
+        modal.style.display = 'block';
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+</script>
+
+
+
+<script>
+
+    function confirmDeletion(event,userId) {
+        event.preventDefault()
+
+        const onayla = window.confirm("Hesabınızı silmek istediğinizden emin misiniz ? ")
+
+        if (onayla) {
+            window.location = `/profile/${userId}/delete`
+        }
+    }
+
+
+
+</script>
+
+
+{% endblock site-content %}

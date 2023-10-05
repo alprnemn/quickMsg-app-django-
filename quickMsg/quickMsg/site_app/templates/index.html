@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block site-title %}
+  Home Page
+{% endblock site-title %}
+
+
+{% block site-content %}
+  
+
+
+<div id="myModal1" class="modal">
+  <div style="background-color: rgb(45, 45, 104);" class="modal-content1">
+      <span class="close" id="closeModalBtn1">&times;</span>
+      <h2 style="color: rgb(168, 162, 162);">Add Message</h2>
+      <form action="{% url 'homepage' %}" style="display: inline-grid;" id="editForm" method="post">
+          {% csrf_token %}
+          {{createMessage}}
+          <button style="margin-top: 10px; background-color: rgba(0, 255, 255, 0.678);" type="submit">Kaydet</button>
+  </form>
+</div>
+</div>
+
+
+
+{% if request.user.is_authenticated %}
+  
+<div class="profile-cards">
+<aside class="profile-card" style="margin-top: 250px; background-color: rgba(115, 115, 216, 0.658);border-radius: 10px;">
+  
+  <header style="background-color:#5353b15e;">
+    
+    <a href="{% url 'profile-page' user.id %}">
+      <img src="{{request.user.handleAvatar}}">
+    </a>
+
+    <h1>{{user.username}}</h1>
+    
+    <h2 style="color: black;">{{user.about}}</h2>
+
+    <h2>Follower: {{user.totalFollowers}} </h2>
+    
+  </header>
+
+  <ul class="profile-social-links">
+    <li>
+      <a href="https://{{user.twitter}}" target="_blank">
+        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/210284/social-twitter.svg">
+      </a>
+    </li>
+    <li>
+      <a href="https://{{user.instagram}}" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg">
+      </a>
+    </li>
+    <li>
+      <a href="https://{{user.github.url}}" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/GitHub_Invertocat_Logo.svg/1200px-GitHub_Invertocat_Logo.svg.png">
+      </a>
+    </li>    
+  </ul>  
+</aside>
+</div>
+
+
+
+<div class="addMessage" style="display: flex;justify-content:center ;margin-top: -135px;">
+  <a href="#">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+   <button class="btn-submit" type="submit" id="openModalBtn1" >Add Msg</button>
+</a>
+</div>
+
+
+{% endif %}
+
+<div class="search-div" style="display: flex;
+justify-content: center;
+margin-top: 20px;
+height: 50px;
+width: auto;">
+  <form method="get">
+    {% csrf_token %}
+    <input placeholder="search message" type="text" name="keyword" maxlength="50" style="height: 35px;
+    width: 250px;
+    background-color: bisque;">
+    <button type="submit" style="background-color: rgba(10, 243, 243, 0.527);">Search</button>
+
+  </form>
+</div>
+
+{% if posts %}
+  
+
+    {% for post in posts %}
+
+        <main>
+          <div class="contents">
+            <article>
+              <img src="{{post.author.handleAvatar}}" />
+              <div style="width: 100%;">
+                <name><a style="color: rgba(0, 255, 255, 0.63);" href="{% url 'profile-page' post.author.id %}"> {{post.author.username}} </a></name>
+                <p>
+                  {{post.messageContent}}
+                </p>
+                <p style="color: rgb(122, 122, 185);">{{post.createdAt}} <p style="background-color: rgb(59 43 191);display: inline;">{{post.postViews}} Views</p></p>
+                {% if request.user.is_authenticated and request.user.id == post.author.id or IsAuthorized   %}
+                <a href="{% url 'delete-message' post.id %}" style="color: brown;">Delete Message</a>
+                <a href="{% url 'update-message' post.id %}" style="color: rgba(31, 207, 148, 0.651);">Update Message</a>
+                
+                {% endif %}
+                <a href="{% url 'message-page' post.id %}" style="color: rgb(197, 197, 25);">Comments({{ post.comments.all|length }})</a>
+                {% if request.user.is_authenticated %}
+                <div style="display: flex;
+                justify-content: end;">
+
+                  <form action="{% url 'like-post' post.id %}">
+                    <button type="submit" style="background-color: rgb(165, 231, 165);">👍</button>  {{post.total_likes}} Likes
+                  </form>
+
+                  <form action="{% url 'dislike-post' post.id %}">
+                    <button type="submit" style="background-color: rgb(204, 59, 48);">👎</button>  {{post.total_dislikes}} Dislikes
+                  </form>
+
+                </div>
+                {% endif %}
+                {% if request.user.is_authenticated == False %}
+                <div style="display: flex;
+                justify-content: end;">
+                <button  style="background-color: rgb(165, 231, 165);">👍</button>  {{post.total_likes}} Likes
+                <button  style="background-color: rgb(204, 59, 48);">👎</button>  {{post.total_dislikes}} Dislikes
+                </div>
+                {% endif %}
+                
+              </div>   
+            </article>
+          </div>
+        </main>
+    {% endfor %}
+
+{% else %}
+        <h1 style="display: flex;justify-content: center;color: rgba(0, 255, 255, 0.438);" >Henüz mesaj eklenmemiş</h1>
+{% endif %}
+
+
+
+    
+    {% for message in messages %}
+
+    <div class="notification">
+        <p>  {{message}} </p>
+        <span class="notification__progress"></span>
+      </div>
+    
+    {% endfor %}
+
+    <footer class="footer">
+      <div class="footer__container">
+          <div class="footer__top">
+              <div>
+                  <h6 class="footer__title"><i style="color: #0aa5ff;" class="fa fa-commenting"></i> QuickMsg App</h6>
+                  <ul class="footer__list">
+                      <li class="footer__list-item">
+                          <a href="" class="footer__list-link">About</a>
+                      </li>
+                      <li class="footer__list-item">
+                          <a href="" class="footer__list-link">Careers</a>
+                      </li>
+                      <li class="footer__list-item">
+                          <a href="" class="footer__list-link">Affiliates</a>
+                      </li>
+                      <li class="footer__list-item">
+                          <a href="" class="footer__list-link">Sitemap</a>
+                      </li>
+                  </ul>
+              </div>
+              
+          </div>
+          <hr class="footer__divider" />
+          <div class="footer__bottom">
+              <span class="copyright"
+                  >&copy; 2023 Company. All rights reserved.</span
+              >
+              <ul class="footer__list footer__list--bottom">
+                  <li class="footer__list-item">
+                      <a href="#" class="footer__list-link">
+                          <i class="ri-facebook-circle-line"></i>
+                      </a>
+                  </li>
+                  <li class="footer__list-item">
+                      <a href="#" class="footer__list-link">
+                          <i class="ri-instagram-line"></i>
+                      </a>
+                  </li>
+                  <li class="footer__list-item">
+                      <a href="#" class="footer__list-link">
+                          <i class="ri-twitter-line"></i>
+                      </a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+  </footer>
+
+
+
+
+    <script>
+        const openModalBtn1 = document.getElementById('openModalBtn1');
+        const closeModalBtn1 = document.getElementById('closeModalBtn1');
+        const modal1 = document.getElementById('myModal1');
+    
+        openModalBtn1.addEventListener('click', () => {
+            modal1.style.display = 'block';
+        });
+    
+        closeModalBtn1.addEventListener('click', () => {
+            modal1.style.display = 'none';
+        });
+    
+        window.addEventListener('click', (event) => {
+            if (event.target === modal1) {
+                modal1.style.display = 'none';
+            }
+        });
+  </script>
+
+
+
+
+
+{% endblock site-content %}

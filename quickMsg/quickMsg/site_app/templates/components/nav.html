@@ -1,0 +1,60 @@
+<nav class="navbar">
+    <div class="logo">
+      <i class="fa fa-commenting"></i>
+      <a href="{% url 'homepage' %}">QuickMsg</a>
+    </div>
+    <div class="menu">
+      <div class="menu-links">
+        <a href="{% url 'homepage' %}">Home</a>
+        {% if request.user.is_authenticated  %}
+        <a href="{% url 'profile-page' request.user.id %}">Profile</a>
+        
+        
+        {% endif %}
+        {% if request.user.is_authenticated == user.id or IsAuthorized %}
+
+        <a href="/admin" target="_blank" >Admin Panel</a>
+
+        {% endif %}
+      </div>
+      {% if request.user.is_authenticated %}
+        <div>
+          <header class="header1">
+            <span class="navigation__group">
+                <img class="profile" src="{{request.user.handleAvatar}}" alt="imge">
+            </span>
+            <div class="dropdown__wrapper hide dropdown__wrapper--fade-in none">
+                <div class="dropdown__group">
+                    <div class="user-name">{{request.user.username}}</div>
+                    <div class="email">{{request.user.email}}</div>
+                </div>
+                <hr class="divider">
+                <nav class="nav2">
+                    <ul>
+                        <li>
+                            <img src="https://raw.githubusercontent.com/atherosai/ui/86f874142b7dc9c897d5bc8735b06303d030e2d6/dropdown-menu-01/assets/profile.svg" alt="Profile"><a href="{% url 'profile-page' request.user.id %}" style="color: white;" > My Profile</a>
+                        </li>
+                        <li>
+                            <img src="https://raw.githubusercontent.com/atherosai/ui/86f874142b7dc9c897d5bc8735b06303d030e2d6/dropdown-menu-01/assets/settings.svg" alt="Settings"> Settings
+                        </li>
+                    </ul>
+                    <ul>
+                        <li >
+                            <img src="https://raw.githubusercontent.com/atherosai/ui/86f874142b7dc9c897d5bc8735b06303d030e2d6/dropdown-menu-01/assets/logout.svg" alt="Log Out"><a style="color: rgba(255, 0, 0, 0.719);" href="{% url 'logout-page' %}">Log out</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+          </header>
+        </div>
+      {% else %}
+      <a href="{% url 'login-page' %}"><button class="log-in">Log In</button></a>
+      <a href="{% url 'signup-page' %}"><button class="log-in">Sign Up</button></a>
+      {% endif %}
+      
+      
+    </div>
+    <div class="menu-btn">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+  </nav>

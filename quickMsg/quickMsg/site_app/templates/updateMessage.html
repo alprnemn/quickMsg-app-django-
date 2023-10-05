@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block site-title %}
+   Update Message
+{% endblock site-title %}
+
+{% block site-content %}
+  
+
+    <h1>update message</h1>
+    <hr>
+    <form action="{% url 'update-message' message.id %}" style="display: inline-grid;" id="editForm" method="post">
+        {% csrf_token %}
+        {{updateMessage}}
+        <button style="margin-top: 10px; background-color: rgba(0, 255, 255, 0.678);" type="submit">Kaydet</button>
+</form>
+
+
+
+
+
+{% endblock site-content %}
